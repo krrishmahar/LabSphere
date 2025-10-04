@@ -240,6 +240,7 @@ model CustomReagent {
   reorderThreshold Float?
   manufacturer     String?
   labs             Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
+  lab_inventory    lab_inventory[]
 }
 
 model ReagentCatalog {
@@ -272,7 +273,8 @@ model TestReagent {
 model lab_inventory {
   id               String         @id
   labId            String
-  reagentId        String
+  reagentId        String?
+  customReagentId  String?        // add this
   quantity         Float
   unit             String
   expiryDate       DateTime?
@@ -281,10 +283,14 @@ model lab_inventory {
   updatedAt        DateTime
   batchNumber      String?
   labs             Lab            @relation(fields: [labId], references: [id], onDelete: Cascade)
-  ReagentCatalog   ReagentCatalog @relation(fields: [reagentId], references: [id], onDelete: Cascade)
+  ReagentCatalog   ReagentCatalog? @relation(fields: [reagentId], references: [id], onDelete: Cascade)
+  CustomReagent    CustomReagent? @relation(fields: [customReagentId], references: [id], onDelete: Cascade)
 
   @@unique([labId, reagentId])
+  @@unique([labId, customReagentId])
+  @@map("lab_inventory")
 }
+
 
 model employee {
   id               String             @id
